@@ -5,11 +5,11 @@ This program that creates a gym environment for for Nadeo TrackMania Nations For
 - Ported for linux only
 
 ----------------------------------------------------------------- 
-<img src="./Asserts/start.png" width="70%">
+<img src="./Asserts/start.png" >
 
 ----------------------------------------------------------------- 
 
-<img src="./Asserts/run1.png" width="70%">
+<img src="./Asserts/run1.png">
 
 
 ## Dependencies
