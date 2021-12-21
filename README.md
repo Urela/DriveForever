@@ -1,8 +1,28 @@
 ## DriveForever
 This is gym environment for training reinforcemnet learning agents on TrackMania Nations Forever game. I built this as part of bigger project to build a self driving agent. I was inspired by Bluemax666 video - ( https://www.youtube.com/watch?v=yZFY5ZJtgyM )
+## THIS HAS NOT BEEN TESTED, I NEED TO OPTIMIZE THIS,  ITS A MVP!!!!!
 
 ## Usage
 The environment is built on rtgym realtime gym, which allows us to sync realtime action with frames (states) and their rewards. *is to elastically constrain the times at which actions are sent and observations are retrieved, in a way that is transparent to the user* -https://github.com/yannbouteiller/rtgym
+
+Import the envirnoment
+```python
+from TMenv import *
+my_config = DEFAULT_CONFIG_DICT
+my_config["interface"] = TMInterface
+my_config["time_step_duration"] = 2      # TODO
+my_config["start_obs_capture"] = 0.05                                                                        
+my_config["time_step_timeout_factor"] = 1.0    
+my_config["ep_max_length"] = 100                                                      
+my_config["act_buf_len"] = 4                                                     
+my_config["reset_act_buf"] = False                                                                                                    
+                                                                                                                                                
+env = gym.make("rtgym:real-time-gym-v0", config=my_config)
+
+input_size  = env.observation_space[0].shape
+output_size = env.action_space.shape
+```
+Run the envirnoment with your desired agent
 
 ```python
   # random test policy
