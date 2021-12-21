@@ -23,7 +23,7 @@ The environment is built on rtgym realtime gym, which allows us to sync realtime
 <p align="center">
      <img src="./Asserts/run1.png">
 </p>
-### TODO
+## TODO
 - Add a learning agent
 - make program faster, right now each timestep takes 1 second.
 - change reward function ( We are think game time, negative reward for time)
