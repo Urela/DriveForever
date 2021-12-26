@@ -3,7 +3,7 @@ This is gym environment for training reinforcemnet learning agents on TrackMania
 ## THIS HAS NOT BEEN TESTED, I NEED TO OPTIMIZE THIS,  ITS A MVP!!!!!
 
 ## Usage
-The environment is built on rtgym realtime gym, which allows us to sync realtime action with frames (states) and their rewards. *is to elastically constrain the times at which actions are sent and observations are retrieved, in a way that is transparent to the user* -https://github.com/yannbouteiller/rtgym
+The environment is continous and such environment can change without the agent interacting with the environment. To apply RL agents we need to force the environment is become a Markovian process. Or else the agent will start creating conspiracy theories. The environment is built on rtgym realtime gym, which * elastically constrain the times at which actions are sent and observations are retrieved, in a way that is transparent to the user* -https://github.com/yannbouteiller/rtgym
 
 Import the envirnoment
 ```python
