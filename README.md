@@ -1,57 +1,47 @@
 ## DriveForever
-This is gym environment for training reinforcemnet learning agents on TrackMania Nations Forever game. I built this as part of bigger project to build a self driving agent. I was inspired by Bluemax666 video - ( https://www.youtube.com/watch?v=yZFY5ZJtgyM )
-## THIS HAS NOT BEEN TESTED, I NEED TO OPTIMIZE THIS,  ITS A MVP!!!!!
+This is a OpenAI gym interface for the TrackMania Nations Forever game. 
 
 ## Usage
-The environment is continous and such environment can change without the agent interacting with the environment. To apply RL agents we need to force the environment is become a Markovian process. Or else the agent will start creating conspiracy theories. The environment is built on rtgym realtime gym, which * elastically constrain the times at which actions are sent and observations are retrieved, in a way that is transparent to the user* -https://github.com/yannbouteiller/rtgym
-
-Import the envirnoment
-```python
-from TMenv import *
-my_config = DEFAULT_CONFIG_DICT
-my_config["interface"] = TMInterface
-my_config["time_step_duration"] = 2      # TODO
-my_config["start_obs_capture"] = 0.05                                                                        
-my_config["time_step_timeout_factor"] = 1.0    
-my_config["ep_max_length"] = 100                                                      
-my_config["act_buf_len"] = 4                                                     
-my_config["reset_act_buf"] = False                                                                                                    
-                                                                                                                                                
-env = gym.make("rtgym:real-time-gym-v0", config=my_config)
-
-input_size  = env.observation_space[0].shape
-output_size = env.action_space.shape
-```
-Run the envirnoment with your desired agent
 
 ```python
-  # random test policy
-  def model(obs): return np.random.uniform(-1, 1, (2, ))
-
-  obs, rew, done = env.reset(), 0, False
-  while not done:
-      act = model(obs)
-      obs, rew, done, info = env.step(act)
-      #print(obs[1].shape)
-      print(f"rew:{rew}")
+  import gym
+  from TrackManiaEnv import TrackManiaEnv  
+  
+  env = TrackManiaEnv()
+  obs = env.reset()
+  for x in range(200):
+    action = env.action_space.sample()    # Some random policy
+    obs, reward, done, info = env.step(action)
+    print(reward)
 ```
+The environement can be vectorized, allowing for multiple instances of the game to be recorded if you can get multiple instances of the game running concurrently.
+```python
+  def make_env():
+    def thunk():
+      env = TrackManiaEnv()
+      return env
+    return thunk
+
+  num_envs = 1
+  env = gym.vector.SyncVectorEnv([make_env() for i in range(num_envs)])
+```
+
 ### Envirnoment Config 
-- Reward: Currently we are following the tmrl project, our reward is the speed of the vehicle, the faster you go the quicker your time will be
-- States: So far states are just raw frames.
+- Reward: Current implention has the reward function as the speed of the car. The faster laps require less crashes
+- States: Four stacked frames sized 84x84 (Black and white images)
 - Done: is always False ( we are treating this an non-episodeic environment)
 
 <p align="center">
      <img src="./Asserts/run1.png" />
 </p>
 
-### TODO
-- Add a learning agent
-- make program faster, right now each timestep takes 1 second.
-- change reward function ( We are think game time, negative reward for time)
-
+### Note
+- Note this is a simple program to interact with TrackMania Nations Forever game to build a self driving car with ease. The game is free to download. Download the game and use the code to interact with the game
+- This only works with linux as we using pynupt to process keypresses. Watch Sentdex GTA 5 tutorial (https://github.com/Sentdex/pygta5)  to learn how to use windows specific driver (should take 1 hour to understand)
+- No offical API for this version of the game. So we use computer vision tricks to determine data. If you don't have specific reason, download Track Mania Stadium. Also free but the game has API for data. 
 ## Dependencies
 - pynput
-- rtgym
+- mss
 - gym
 - opencv
 
@@ -60,4 +50,5 @@ Run the envirnoment with your desired agent
 - Ported for linux only
 
 ## Reference 
-[TrackMania through Reinforcement Learning (tmrl)](https://pypi.org/project/tmrl/), Great starting point
+[Using Python programming to Play Grand Theft Auto 5](https://github.com/Sentdex/pygta5), Great starting point
+[TrackMania through Reinforcement Learning (tmrl)](https://pypi.org/project/tmrl/)
