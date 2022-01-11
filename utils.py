@@ -1,41 +1,7 @@
-import cv2
-import time
-import random
 import numpy as np
-from pynput.keyboard import Key, Controller
-
-###################################################################
-###   Control mechanism
-###################################################################
-def horizontal(controller, press_duration=0):
-  if press_duration == 0:
-    controller.release(Key.right)
-    controller.release(Key.left)
-  elif press_duration < 0:       # turn left if negative
-    controller.press(Key.left)
-    controller.release(Key.right)
-    time.sleep(abs(press_duration))
-    controller.release(Key.left)
-  else:
-    controller.press(Key.right)
-    controller.release(Key.left)
-    time.sleep(abs(press_duration))
-    controller.release(Key.right)
-
-def vertical(controller, press_duration=0):
-  if press_duration ==0:
-    controller.release(Key.down)
-    controller.release(Key.up)
-  elif press_duration < 0:       # reverse if negative
-    controller.press(Key.down)
-    controller.release(Key.up)
-    time.sleep(abs(press_duration))
-    controller.release(Key.down)
-  else:
-    controller.press(Key.up)
-    controller.release(Key.down)
-    time.sleep(abs(press_duration))
-    controller.release(Key.up)
+import cv2
+import mss
+import time
 
 ###################################################################
 ###   Determing speed using 1-NN clustering
@@ -88,33 +54,103 @@ def get_speed(img, digits):
             best3, num3 = 0, 0
     return float(100 * num1 + 10 * num2 + num3)
 
+digits = load_digits()
+def grab_img_and_speed(monitor, sct, resize_width, resize_height):
+  img = np.array(sct.grab( monitor ), dtype=np.uint8) # convert to numpy array
+  img = np.flip(img[:, :, :3], 2)     # convert to RGB numpy array
+  img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) #convert to black and white
 
-if __name__ == "__main__":
-  print("Debugging ")
+  speed = get_speed(img, digits)
+  img = cv2.resize(img, (resize_width, resize_height))
+  return img, speed
 
-  ## test control mechanism 
-  #keyboard = Controller()
-  #for x in range(100):
-  #  signal_x = random.uniform(-1, 1)
-  #  signal_y = random.uniform(-1, 1)
-  #  vertical(keyboard, signal_x)
-  #  horizontal(keyboard, signal_y)
+"""
+Game controller adaptaed from
+https://github.com/SamiKauhala/self-driving-car-in-tmnf/blob/master/keys.py
+"""
 
-  #################################################
+import time
+import pynput
 
-  import mss
-  monitor = {"top": 0, "left": 0, "width": 1366, "height": 768 }
-  digits = load_digits()
-  sct = mss.mss()
+def gamecontroller(action, controller=pynput.keyboard.Controller(), press_duration=0.006):
+  selected_action =' '
+  if action == 0: # forward
+    ress_duration = 0.0075
+    #controller.press(pynput.keyboard.Key.up)
+    #controller.release(pynput.keyboard.Key.left)
+    #controller.release(pynput.keyboard.Key.right)
+    #controller.release(pynput.keyboard.Key.down)
+    #time.sleep(press_duration)
+    selected_action ='forward'
 
-  while True:
-    img = np.asarray(sct.grab( monitor ))
+  elif action == 1: #left
+    #controller.press(pynput.keyboard.Key.left)
+    #controller.release(pynput.keyboard.Key.right)
+    #controller.release(pynput.keyboard.Key.up)
+    #controller.release(pynput.keyboard.Key.down)
+    #time.sleep(press_duration)
+    selected_action ='left'
 
-    img = sct.grab( monitor ) # get screen (as BGRA images)
-    img = np.array(img, dtype=np.uint8) # convert to numpy array
-    img = np.flip(img[:, :, :3], 2)     # convert to RGB numpy array
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) #convert to black and white
+  elif action == 2: #right
+    #controller.press(pynput.keyboard.Key.right)
+    #controller.release(pynput.keyboard.Key.left)
+    #controller.release(pynput.keyboard.Key.up)
+    #controller.release(pynput.keyboard.Key.down)
+    #time.sleep(press_duration)
+    selected_action ='right'
 
-    #print( img.shape)
-    print( get_speed(img, digits ))     #
+  elif action == 3: # reverse
+    #controller.press(pynput.keyboard.Key.down)
+    #controller.release(pynput.keyboard.Key.up)
+    #controller.release(pynput.keyboard.Key.right)
+    #controller.release(pynput.keyboard.Key.left)
+    #time.sleep(press_duration)
+    selected_action ='reverse'
+
+  elif action == 4: # forward left
+    #controller.press(pynput.keyboard.Key.up)
+    #controller.press(pynput.keyboard.Key.left)
+    #controller.release(pynput.keyboard.Key.right)
+    #controller.release(pynput.keyboard.Key.down)
+    #time.sleep(press_duration)
+    #controller.release(pynput.keyboard.Key.left)
+    selected_action ='forward left'
+
+  elif action == 5: # forward right
+    #controller.press(pynput.keyboard.Key.up)
+    #controller.press(pynput.keyboard.Key.right)
+    #controller.release(pynput.keyboard.Key.down)
+    #controller.release(pynput.keyboard.Key.left)
+    #time.sleep(press_duration)
+    #controller.release(pynput.keyboard.Key.right)
+    selected_action ='forward right'
+
+  elif action == 6: # reverse left
+    #controller.press(pynput.keyboard.Key.down)
+    #controller.press(pynput.keyboard.Key.left)
+    #controller.release(pynput.keyboard.Key.up)
+    #controller.release(pynput.keyboard.Key.right)
+    #time.sleep(press_duration)
+    #controller.release(pynput.keyboard.Key.left)
+    selected_action ='reverse left'
+
+  elif action == 7: # reverse right
+    #controller.press(pynput.keyboard.Key.down)
+    #controller.press(pynput.keyboard.Key.right)
+    #controller.release(pynput.keyboard.Key.left)
+    #controller.release(pynput.keyboard.Key.up)
+    #time.sleep(press_duration)
+    #controller.release(pynput.keyboard.Key.right)
+    selected_action = 'reverse right'
+
+  elif action == 8: # do nothing
+    #controller.release(pynput.keyboard.Key.down)
+    #controller.release(pynput.keyboard.Key.up)
+    #controller.release(pynput.keyboard.Key.left)
+    #controller.release(pynput.keyboard.Key.right)
+    #controller.release(pynput.keyboard.Key.up)
+    selected_action = 'Do nothing'
+
+  return selected_action
+
 
