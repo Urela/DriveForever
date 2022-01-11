@@ -12,7 +12,7 @@ This is a OpenAI gym interface for the TrackMania Nations Forever game.
   for x in range(200):
     action = env.action_space.sample()    # Some random policy
     obs, reward, done, info = env.step(action)
-    print(reward)
+    print(obs.shape, reward, done)
 ```
 The environement can be vectorized, allowing for multiple instances of the game to be recorded if you can get multiple instances of the game running concurrently.
 ```python
