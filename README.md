@@ -50,5 +50,5 @@ The environement can be vectorized, allowing for multiple instances of the game 
 - Ported for linux only
 
 ## Reference 
-[Using Python programming to Play Grand Theft Auto 5](https://github.com/Sentdex/pygta5), Great starting point
-[TrackMania through Reinforcement Learning (tmrl)](https://pypi.org/project/tmrl/)
+- [Using Python programming to Play Grand Theft Auto 5](https://github.com/Sentdex/pygta5), Great starting point
+- [TrackMania through Reinforcement Learning (tmrl)] (https://pypi.org/project/tmrl/)
